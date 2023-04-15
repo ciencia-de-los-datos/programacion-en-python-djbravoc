@@ -17,10 +17,7 @@ archivo = reader(file,delimiter= "\t")
 archivo = list(archivo)
 
 def pregunta_01():
-    sumatoria = 0
-    for fila in archivo:
-    sumatoria += int(fila[1])
-    return sumatoria
+
     """
     Retorne la suma de la segunda columna.
 

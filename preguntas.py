@@ -11,7 +11,10 @@ Utilice el archivo `data.csv` para resolver las preguntas.
 
 
 """
-
+from csv import reader
+file = open("data.csv","r")
+archivo = reader(file,delimiter= "\t")
+archivo = list(archivo)
 
 def pregunta_01():
     """

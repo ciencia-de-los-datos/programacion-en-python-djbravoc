@@ -11,7 +11,11 @@ Utilice el archivo `data.csv` para resolver las preguntas.
 
 
 """
-
+import csv
+from csv import reader
+datos = open("data.csv","r")
+database = reader(datos,delimiter= "\t")
+database = list(database)
 
 def pregunta_01():
 
@@ -22,7 +26,11 @@ def pregunta_01():
     214
 
     """
-    return
+    suma = 0
+    for fila in database:
+        suma += int(fila[1])
+    return suma
+    
 
 
 def pregunta_02():
@@ -40,7 +48,11 @@ def pregunta_02():
     ]
 
     """
-    return
+    colum = [fila[0] for fila in database]
+    columnodu = sorted(set(colum))
+    listatupla =[(j, colum.count(j)) for j in columnodu]
+    return listatupla
+    
 
 
 def pregunta_03():
@@ -58,7 +70,16 @@ def pregunta_03():
     ]
 
     """
-    return
+    datos = [(row[0], int(row[1])) for row in database]
+    sumas = {}
+    for letra, numero in datos:
+        if letra in sumas:
+            sumas[letra] += numero
+        else:
+            sumas[letra] = numero
+    result = sorted(sumas.items())
+    return result
+    
 
 
 def pregunta_04():
@@ -83,7 +104,14 @@ def pregunta_04():
     ]
 
     """
-    return
+    counts = [0] * 12
+    for row in database:
+        fecha_str = row[2]
+        año, mes, dia = fecha_str.split('-')
+        mes_index = int(mes) - 1
+        counts[mes_index] += 1
+    result = [(f"{i+1:02d}", count) for i, count in enumerate(counts)]
+    return result
 
 
 def pregunta_05():
@@ -101,8 +129,18 @@ def pregunta_05():
     ]
 
     """
-    return
+    max_min_dict = {}
+    for row in database:
+        letra = row[0]
+        valor = float(row[1])
+        if letra not in max_min_dict:
+            max_min_dict[letra] = {'max': valor, 'min': valor}
+        else:
+            max_min_dict[letra]['max'] = max(max_min_dict[letra]['max'], valor)
+            max_min_dict[letra]['min'] = min(max_min_dict[letra]['min'], valor)
 
+    result = [(letra, max_min_dict[letra]['max'], max_min_dict[letra]['min']) for letra in sorted(max_min_dict)]
+    return result
 
 def pregunta_06():
     """
@@ -126,7 +164,20 @@ def pregunta_06():
     ]
 
     """
-    return
+    min_max_dict = {}
+    for row in database:
+        col5 = row[4]
+        if col5 != "":
+            for pair in col5.split(","):
+                llave, valor = pair.split(":")
+                if llave not in min_max_dict:
+                    min_max_dict[llave] = {'min': float(valor), 'max': float(valor)}
+                else:
+                    min_max_dict[llave]['min'] = min(min_max_dict[llave]['min'], float(valor))
+                    min_max_dict[llave]['max'] = max(min_max_dict[llave]['max'], float(valor))
+
+    result = [(llave, min_max_dict[llave]['min'], min_max_dict[llave]['max']) for llave in sorted(min_max_dict)]
+    return result
 
 
 def pregunta_07():
@@ -150,7 +201,17 @@ def pregunta_07():
     ]
 
     """
-    return
+    dict_valor = {}
+    for row in database:
+        col1 = row[0]
+        col2 = row[1]
+        if col2 not in dict_valor:
+            dict_valor[col2] = [col1]
+        else:
+            dict_valor[col2].append(col1)
+
+    result = [(int(llave), dict_valor[llave]) for llave in sorted(dict_valor)]
+    return result
 
 
 def pregunta_08():
@@ -175,7 +236,16 @@ def pregunta_08():
     ]
 
     """
-    return
+    dict_valor = {}
+    for row in database:
+        col1 = row[0]
+        col2 = row[1]
+        if col2 not in dict_valor:
+            dict_valor[col2] = [col1]
+        else:
+            dict_valor[col2].append(col1)
+    result = [(int(llave), sorted(list(set(dict_valor[llave])))) for llave in sorted(dict_valor)]
+    return result
 
 
 def pregunta_09():
@@ -198,7 +268,16 @@ def pregunta_09():
     }
 
     """
-    return
+    dict_contador = {}
+    for row in database:
+        col5 = row[4]
+        for llave_value in col5.split(','):
+            llave = llave_value[:3]  # Obtiene la clave de tres letras
+            if llave in dict_contador:
+                dict_contador[llave] += 1
+            else:
+                dict_contador[llave] = 1
+    return dict_contador
 
 
 def pregunta_10():
@@ -219,7 +298,15 @@ def pregunta_10():
 
 
     """
-    return
+    lista_contador = []
+    for row in database:
+        col1 = row[0]
+        col4 = row[3]
+        col5 = row[4]
+        contador4 = len(col4.split(',')) 
+        contador5 = len(col5.split(','))
+        lista_contador.append((col1, contador4, contador5))
+    return lista_contador
 
 
 def pregunta_11():
@@ -240,7 +327,19 @@ def pregunta_11():
 
 
     """
-    return
+    result = {}
+    for row in database:
+        col2 = int(row[1])
+        col4 = row[3].split(',')
+        for letra in col4:
+            letra = letra.strip()  # elimina espacios en blanco antes y después de la letra
+            if letra not in result:
+                result[letra] = col2
+            else:
+                result[letra] += col2
+
+    result = dict(sorted(result.items()))  # ordena el diccionario por clave
+    return result
 
 
 def pregunta_12():
@@ -258,4 +357,14 @@ def pregunta_12():
     }
 
     """
-    return
+    diccionario_resultado = {}
+    for linea in database:
+        letra = linea[0]
+        dic_codificado = linea[4]
+        diccionario = {}
+        for item in dic_codificado.split(','):
+            clave, valor = item.split(':')
+            diccionario[clave] = int(valor)
+            suma = sum(diccionario.values())
+        diccionario_resultado[letra] = diccionario_resultado.get(letra, 0) + suma
+    return diccionario_resultado
